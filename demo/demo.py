@@ -95,7 +95,7 @@ if __name__ == "__main__":
                 )
             )
             fields = predictions["instances"].get_fields()
-            with open(data_output, 'w') as f:  # Just use 'w' mode in 3.x
+            with open(args.output_csv, 'w') as f:  # Just use 'w' mode in 3.x
                 w = csv.DictWriter(f, fields.keys())
                 w.writeheader()
                 w.writerow(predictions["instances"].get_fields())
