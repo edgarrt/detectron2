@@ -6,6 +6,7 @@ import os
 import time
 import cv2
 import tqdm
+import csv
 
 from detectron2.config import get_cfg
 from detectron2.data.detection_utils import read_image
@@ -48,6 +49,13 @@ def get_parser():
     )
 
     parser.add_argument(
+        "--output_csv",
+        help="A file or directory to save output results. "
+        "If not given, will show output in an OpenCV window.",
+    )
+
+
+    parser.add_argument(
         "--confidence-threshold",
         type=float,
         default=0.5,
@@ -86,7 +94,11 @@ if __name__ == "__main__":
                     path, len(predictions["instances"]), time.time() - start_time
                 )
             )
-
+            fields = predictions["instances"].get_fields()
+            with open(data_output, 'w') as f:  # Just use 'w' mode in 3.x
+                w = csv.DictWriter(f, fields.keys())
+                w.writeheader()
+                w.writerow(predictions["instances"].get_fields())
             if args.output:
                 if os.path.isdir(args.output):
                     assert os.path.isdir(args.output), args.output
